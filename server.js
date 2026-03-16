@@ -41,20 +41,25 @@ app.get("/plans", (req, res) => {
 
     if (isNaN(price)) {
       return res.status(400).json({
-        error: "Invalid max_price value"
-      });
+       success: false,
+       message: "Invalid max_price value"
+    });
     }
-
     result = plans.filter(plan => plan.price <= price);
   }
 
   if (result.length === 0) {
     return res.status(404).json({
+      success: false,  
       message: "No plans found"
     });
   }
 
-  res.json(result);
+  res.status(200).json({
+   success: true,
+   count: result.length,
+   data: result
+ });
 });
 
 
@@ -83,7 +88,8 @@ app.get("/plans/search", (req, res) => {
 
   if (!name) {
     return res.status(400).json({
-      error: "Please provide a plan name"
+      success: false,  
+      message: "Please provide a plan name"
     });
   }
 
@@ -93,11 +99,15 @@ app.get("/plans/search", (req, res) => {
 
   if (result.length === 0) {
     return res.status(404).json({
+      success: false,  
       message: "Plan not found"
     });
   }
 
-  res.json(result);
+  res.status(200).json({
+   success: true,
+   data: result
+ });
 });
 
 
@@ -125,13 +135,15 @@ app.get("/plans/sort", (req, res) => {
 
   if (!order) {
     return res.status(400).json({
-      error: "Please specify order=low to high or order=high to low"
+      success: false,
+      message: "Please specify order=low-to-high or order=high-to-low"
     });
   }
 
   if (order !== "low-to-high" && order !== "high-to-low") {
     return res.status(400).json({
-      error: "Order must be 'low-to-high' or 'high-to-low'"
+      success: false,  
+      message: "Order must be 'low-to-high' or 'high-to-low'"
     });
   }
 
@@ -139,7 +151,10 @@ app.get("/plans/sort", (req, res) => {
     return order === "low-to-high" ? a.price - b.price : b.price - a.price;
   });
 
-  res.json(sortedPlans);
+  res.status(200).json({
+   success: true,
+   data: sortedPlans
+ });
 });
 
 app.listen(PORT, () => {
