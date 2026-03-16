@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Zoiko Lite",
+    "price": 15,
+    "data_allowance": "Unlimited 5G Data (5GB Premium Data)",
+    "buy_url": "https://zoikomobile.com/postpaid-plans"
+  },
+  {
+    "name": "Zoiko Core",
+    "price": 25,
+    "data_allowance": "Unlimited 5G Data (10GB Premium Data)",
+    "buy_url": "https://zoikomobile.com/postpaid-plans"
+  },
+  {
+    "name": "Zoiko Max",
+    "price": 50,
+    "data_allowance": "Unlimited 5G Data (20GB Premium Data)",
+    "buy_url": "https://zoikomobile.com/postpaid-plans"
+  },
+  {
+    "name": "Zoiko Infinity",
+    "price": 65,
+    "data_allowance": "Unlimited 5G Data (30GB Premium Data)",
+    "buy_url": "https://zoikomobile.com/postpaid-plans"
+  },
+  {
+    "name": "Zoiko Supreme Unlimited",
+    "price": 72,
+    "data_allowance": "Unlimited 5G Data (35GB Premium Data)",
+    "buy_url": "https://zoikomobile.com/postpaid-plans"
+  },
+  {
+    "name": "Zoiko Flex",
+    "price": 13,
+    "data_allowance": "Unlimited 5G Data (4GB Premium Data)",
+    "buy_url": "https://zoikomobile.com/prepaid-plans"
+  },
+  {
+    "name": "Zoiko Essentials",
+    "price": 20,
+    "data_allowance": "Unlimited 5G Data (6GB Premium Data)",
+    "buy_url": "https://zoikomobile.com/prepaid-plans"
+  }
+]
