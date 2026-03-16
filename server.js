@@ -6,17 +6,17 @@ const swaggerSpec = require("./swagger");
 const app = express();
 const PORT = 3000;
 
-app.get("/", (req, res) => {
-  res.send("Zoiko Plan API is running. Visit /api-docs for documentation.");
-});
+app.use(express.json());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 /**
  * @swagger
  * /plans:
  *   get:
- *     summary: Get all plans or filter by price
+ *     summary: Get all mobile plans
+ *     description: Returns all Zoiko mobile plans with optional price filtering
  *     parameters:
  *       - in: query
  *         name: max_price
@@ -26,22 +26,37 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *     responses:
  *       200:
  *         description: List of plans
+ *       400:
+ *         description: Invalid price value
+ *       404:
+ *         description: No plans found
  */
 app.get("/plans", (req, res) => {
-  const maxPrice = req.query.max_price;
+  const { max_price } = req.query;
 
-  if (maxPrice) {
-    const filtered = plans.filter(plan => plan.price <= maxPrice);
+  let result = plans;
 
-    if (filtered.length === 0) {
-      return res.status(404).json({ message: "No plans found under this price" });
+  if (max_price) {
+    const price = parseFloat(max_price);
+
+    if (isNaN(price)) {
+      return res.status(400).json({
+        error: "Invalid max_price value"
+      });
     }
 
-    return res.json(filtered);
+    result = plans.filter(plan => plan.price <= price);
   }
 
-  res.json(plans);
+  if (result.length === 0) {
+    return res.status(404).json({
+      message: "No plans found"
+    });
+  }
+
+  res.json(result);
 });
+
 
 /**
  * @swagger
@@ -54,29 +69,80 @@ app.get("/plans", (req, res) => {
  *         schema:
  *           type: string
  *         required: true
- *         description: Plan name
+ *         description: Name of the plan
  *     responses:
  *       200:
  *         description: Plan found
+ *       400:
+ *         description: Name query missing
+ *       404:
+ *         description: Plan not found
  */
 app.get("/plans/search", (req, res) => {
-  const name = req.query.name;
+  const { name } = req.query;
 
   if (!name) {
-    return res.status(400).json({ error: "Plan name is required" });
+    return res.status(400).json({
+      error: "Please provide a plan name"
+    });
   }
 
-  const plan = plans.find(p =>
-    p.name.toLowerCase() === name.toLowerCase()
+  const result = plans.filter(plan =>
+    plan.name.toLowerCase().includes(name.toLowerCase())
   );
 
-  if (!plan) {
-    return res.status(404).json({ message: "Plan not found" });
+  if (result.length === 0) {
+    return res.status(404).json({
+      message: "Plan not found"
+    });
   }
 
-  res.json(plan);
+  res.json(result);
+});
+
+
+/**
+ * @swagger
+ * /plans/sort:
+ *   get:
+ *     summary: Sort plans by price
+ *     parameters:
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [low-to-high, high-to-low]
+ *         required: true
+ *         description: Sort order
+ *     responses:
+ *       200:
+ *         description: Sorted plans
+ *       400:
+ *         description: Invalid sort order
+ */
+app.get("/plans/sort", (req, res) => {
+  const { order } = req.query;
+
+  if (!order) {
+    return res.status(400).json({
+      error: "Please specify order=low to high or order=high to low"
+    });
+  }
+
+  if (order !== "low-to-high" && order !== "high-to-low") {
+    return res.status(400).json({
+      error: "Order must be 'low-to-high' or 'high-to-low'"
+    });
+  }
+
+  const sortedPlans = [...plans].sort((a, b) => {
+    return order === "low-to-high" ? a.price - b.price : b.price - a.price;
+  });
+
+  res.json(sortedPlans);
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}/api-docs`);
+  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
 });
