@@ -37,7 +37,7 @@ zoiko-plan-orchestrator
 Clone the repository:
 
 ```
-git clone https://github.com/YOUR_USERNAME/zoiko-plan-orchestrator.git
+git clone https://github.com/abhishek-kumar-14/zoiko-plan-orchestrator.git
 ```
 
 Navigate into the project folder:
